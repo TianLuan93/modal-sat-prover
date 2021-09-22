@@ -6,15 +6,29 @@ def convertNNFMain(input):
 phi = []
 def convertNNF():
     global phi
-    operators = ["&", "|", "-", ">>", "[]", "<>"]
+    operators = ["&", "|", "-", ">>", "[]", "<>", "<->"]
     if phi:
         arg = phi.pop()
     else:
         return
     if arg not in operators:
+        if arg == "true":
+            return [True]
+        elif arg == "false":
+            return [False]
         return [arg]
 
-    if arg == ">>":
+    if arg == "<->":
+        temp = phi.copy()
+        tmp = convertNNF()
+        tmp1 = convertNNF()
+        phi = temp
+        phi = phi + ["-"]
+        tmp2 = convertNNF()
+        phi = phi + ["-"]
+        tmp3 = convertNNF()
+        return tmp + tmp1 + ["&"] + tmp2 + tmp3 + ["&"] + ["|"]
+    elif arg == ">>":
         tmp = convertNNF() # right arg
         phi = phi + ["-"]
         tmp1 = convertNNF() # left arg
@@ -25,7 +39,11 @@ def convertNNF():
         return convertNNF() + ["<>"]
     elif arg == "-":
         new_arg = phi.pop()
-        if new_arg not in operators:
+        if new_arg == "true":
+            return [False]
+        elif new_arg == "false":
+            return [True]
+        elif new_arg not in operators and new_arg != "true" and new_arg != "false":
             return [new_arg, "-"]
         elif new_arg == "-":
             return convertNNF()
@@ -46,6 +64,16 @@ def convertNNF():
             tmp = convertNNF()
             tmp1 = convertNNF()
             return tmp1 + tmp + ["&"]
+        elif new_arg == "<->":
+            temp = phi.copy()
+            tmp = convertNNF()
+            tmp1 = convertNNF()
+            phi = temp
+            phi = phi + ["-"]
+            tmp2 = convertNNF()
+            phi = phi + ["-"]
+            tmp3 = convertNNF()
+            return tmp + tmp1 + ["|"] + tmp2 + tmp3 + ["|"] + ["&"]
         elif new_arg == "[]":
             phi = phi + ["-"]
             return convertNNF() + ["<>"]

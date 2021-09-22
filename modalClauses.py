@@ -1,10 +1,10 @@
-from convertNNF1 import convertNNFMain
+from convertNNF import convertNNFMain
 
 class modalClause:
     def __init__(self):
         self.clause = []     # clause
         self.boxDepth = 0     # modal depth
-        self.cluaseInModalContent = []
+        self.clauseInModalContent = []
 
 def popModalContext(phi):
     arg = phi[-1]
@@ -26,16 +26,13 @@ def constructModalClause(X):
     res = []
     if X:
         for clause in X:
-            if clause == [True] or clause == [False]:
-                res.append(clause)
-            else:
-                tmp = popModalContext(clause)
-                if "[]" not in tmp and "<>" not in tmp:
-                    clause = convertNNFMain(clause)
-                    tmp = convertNNFMain(tmp)
-                new = modalClause()
-                new.clause = clause
-                new.boxDepth = calDepth(clause)
-                new.cluaseInModalContent = tmp
-                res.append(new)
+            tmp = popModalContext(clause)
+            if "[]" not in tmp and "<>" not in tmp:
+                clause = convertNNFMain(clause)
+                tmp = convertNNFMain(tmp)
+            new = modalClause()
+            new.clause = clause
+            new.boxDepth = calDepth(clause)
+            new.clauseInModalContent = tmp
+            res.append(new)
     return res

@@ -7,7 +7,7 @@ def shunting_yard(string):
     it = iter(range(0, len(string)))
     for i in it:
         ch = string[i]
-        operator_char = (ch in ["-", "&", "|", "^", ">", " ", "(", ")", "[", "]", "<"])
+        operator_char = (ch in ["-", "&", "|", "^", ">", " ", "(", ")", "[", "]", "<", "*"])
 
         if current_token and operator_char:
             output_queue.append(current_token)
@@ -22,7 +22,7 @@ def shunting_yard(string):
             output_queue.append(current_token)
             current_token = ''
 
-        if ch in ["-", "&", "|", "^", '>', '<', '[', ']']:
+        if ch in ["-", "&", "|", "^", '>', '<', '[', ']', '*']:
 
             # don't let unary '-' operator pop a binary operator from the stack
             # give parens a high precedence
@@ -55,6 +55,8 @@ def shunting_yard(string):
             elif ch == "[" and string[i + 1] == "]":
                 stack.append("[]")
                 next(it)
+            elif ch == "*":
+                stack.append("<->")
             else:
                 stack.append(ch)
 
@@ -68,7 +70,7 @@ def shunting_yard(string):
                     break
                 output_queue.append(next_operator)
 
-        if ch not in ["-", "&", "|", "^", '>', "(", ")", " ", "<", "[", "]"]:
+        if ch not in ["-", "&", "|", "^", '>', "(", ")", " ", "<", "[", "]", "*"]:
             current_token += ch
 
     while stack:
